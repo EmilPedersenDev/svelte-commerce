@@ -1,0 +1,12 @@
+{
+	"/": [],
+	"/account": [],
+	"/cart": [],
+	"/clothes": [
+		"src/routes/clothes/+page.ts"
+	],
+	"/clothes/[slug]": [
+		"src/routes/clothes/[slug]/+page.ts"
+	],
+	"/shoes": []
+}
