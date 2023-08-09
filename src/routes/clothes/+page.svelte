@@ -21,7 +21,7 @@
                     <h2 class="card-title">{product.name}</h2>
                     <p>{product.price}$</p>
                     <div class="card-actions justify-end">
-                        <button class="btn btn-primary" on:click={goToProduct(product.id)}>Buy Now</button>
+                        <button class="btn btn-primary" on:click={goToProduct(product.id)}>Buy</button>
                     </div>
                 </div>
             </li>

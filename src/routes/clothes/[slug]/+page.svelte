@@ -1,23 +1,45 @@
 <script lang="ts">
-    import api from '../../../service/axios'
-    import type {Product} from "../../../types";
+    import type {Product, ProductItem, ProductOrderReq, User} from "../../../types";
+    import {productOrder} from "../../../stores/order-store";
+    import {onDestroy} from "svelte";
+    import Alert from '../../../components/alert.svelte'
+    import {user} from "../../../stores/user-store";
 
+    // Reactive state
     export let data;
-    let selectedSize = "";
     const {product}: Product = data;
+    let selectedSize = "";
+    let error = null;
+    let userId;
 
-    const addToCart = (e) => {
+    // Computed properties
+    $: selectedProductItem = product.productItems.find((productItem: ProductItem) => productItem.size === selectedSize);
+
+    const unsubscribeUserStore = user.subscribe((value: User): void => {
+        userId = value?.id;
+    })
+
+    onDestroy((): void => {
+        unsubscribeUserStore();
+    })
+
+    const addToCart = async (): Promise<void> => {
         try {
-            // const { data } = api.post();
-            console.log("post to cart");
+            const productOrderReq: ProductOrderReq = {
+                userId: userId,
+                productItem: {...selectedProductItem, quantity: 1},
+                currentProductOrder: null
+            }
+            await productOrder.create(productOrderReq);
+
         } catch (err) {
+            error = err.response?.data?.message || "Error message";
             console.error(err)
         }
 
     }
 
-    function onChange(event) {
-        console.log(event.currentTarget.value)
+    function onChange(event: any): void {
         selectedSize = event.target.value;
     }
 </script>
@@ -37,16 +59,21 @@
             <div class="form-control">
                 <label class="label cursor-pointer">
                     <span class="label-text">{productItem.size}</span>
-                    <input type="radio" name="radio-10" value={productItem.size} on:change={onChange}
-                           class="radio checked:bg-red-500"
-                           checked="{selectedSize.toLowerCase() === productItem.size.toLowerCase()}"/>
+                    {#if productItem.quantity > 0}
+                        <input type="radio" name="radio-10" value={productItem.size} on:change={onChange}
+                               class="radio checked:bg-red-500"
+                               checked="{selectedSize.toLowerCase() === productItem.size.toLowerCase()}"/>
+                    {/if}
                 </label>
             </div>
         {/each}
         <div class="card-actions justify-center">
-            <button on:click={addToCart} class="btn">Add to cart</button>
+            <button on:click={addToCart} class="btn" disabled="{!selectedSize}">Add to cart</button>
         </div>
     </div>
+    {#if error}
+        <Alert type={'error'} alertMsg={error} on:closeAlert={() => {error = null}}/>
+    {/if}
 </div>
 
 <style lang="scss">
