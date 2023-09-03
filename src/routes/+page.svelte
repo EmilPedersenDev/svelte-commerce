@@ -1,5 +1,5 @@
 <script>
-    import '../styling/app.scss';
+  import '../styling/app.scss';
 
 </script>
 
@@ -11,10 +11,10 @@
 </div>
 
 <style lang="scss">
-    .container {
-        text-align: center;
-      margin-top: 100px;
-    }
+  .container {
+    text-align: center;
+    margin-top: 100px;
+  }
 </style>
 
 

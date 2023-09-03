@@ -11,6 +11,7 @@
     let selectedSize = "";
     let error = null;
     let userId;
+    let orderSuccess = false;
 
     // Computed properties
     $: selectedProductItem = product.productItems.find((productItem: ProductItem) => productItem.size === selectedSize);
@@ -31,7 +32,7 @@
                 currentProductOrder: null
             }
             await productOrder.create(productOrderReq);
-
+            orderSuccess = true;
         } catch (err) {
             error = err.response?.data?.message || "Error message";
             console.error(err)
@@ -44,6 +45,9 @@
     }
 </script>
 
+{#if orderSuccess}
+    <Alert type={'success'} alertMsg={"Successfully added product to cart"} on:closeAlert={() => {error = null}}/>
+{/if}
 <h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">Product
     no.{data?.slug}</h1>
 

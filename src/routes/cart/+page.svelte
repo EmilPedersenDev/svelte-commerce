@@ -1,27 +1,18 @@
 <script lang="ts">
-    import {get} from "svelte/store";
     import {productOrder} from "../../stores/order-store";
-    import {user} from "../../stores/user-store";
     import Alert from "../../components/Alert.svelte";
     import {changeQuantityTypes} from "../../enums";
     import type {Order, OrderItem, User} from "../../types";
+    import api from "../../service/axios";
 
     let error = null;
+    let loading = false;
     let removeOrderItemDialog;
     let selectedOrderItemId = null;
     let productOrderPromise = getProductOrder();
 
     async function getProductOrder(): Promise<Order | {}> {
-        const cachedProductOrder: Order | {} = get(productOrder);
-        const cachedUser: User = get(user);
-
-        if (cachedProductOrder && Object.keys(cachedProductOrder).length !== 0) {
-            return cachedProductOrder;
-        }
-
-        if (!cachedUser) return;
-
-        return productOrder.get(cachedUser.id);
+        return productOrder.get();
     }
 
     const showRemoveOrderItemModal = (orderItemId: number): void => {
@@ -37,7 +28,7 @@
         removeOrderItemDialog.close();
     }
 
-    const getTotalPrice = (productOrder): number => {
+    const getTotalPrice = (productOrder: Order): number => {
         if (productOrder?.orderItems == null) {
             return 0;
         }
@@ -65,6 +56,15 @@
             productOrderPromise = getProductOrder();
         } catch (err: any) {
             error = err;
+        }
+    }
+
+    const onStripeCheckout = async (productOrder: Order): Promise<void> => {
+        try {
+            const {data: redirectUrl}: { data: string; } = await api.post("productOrders/checkout", productOrder);
+            window.location.href = redirectUrl;
+        } catch (e) {
+            error = e;
         }
     }
 
@@ -128,8 +128,14 @@
             {/if}
         </div>
         <h2><span>Total Price: </span>{getTotalPrice(productOrder)}$</h2>
-        <button disabled={productOrder?.orderItems.length < 1} class="btn btn-outline">
-            Checkout
+        <button class="btn btn-outline" disabled={productOrder?.orderItems.length < 1}
+                on:click={onStripeCheckout(productOrder)}>
+            {#if loading}
+                <span class="loading loading-spinner"></span>
+            {:else}
+                <i class="fa-brands fa-stripe-s"></i>
+            {/if}
+            Checkout with Stripe
         </button>
         <dialog bind:this={removeOrderItemDialog} on:close={closeRemoveOrderItemModal} id="my_modal_1"
                 class="modal">

@@ -1,16 +1,27 @@
-import {writable} from 'svelte/store';
+import {get, writable} from 'svelte/store';
 import api from '../service/axios';
 import type {AxiosResponse} from 'axios';
-import type {Order, OrderItem, ProductItem, ProductOrderReq} from "../types";
+import type {Writable} from 'svelte/store';
+import type {Order, OrderItem, ProductOrderReq, User} from "../types";
+import {user} from "./user-store";
 
 function getProductOrder() {
-    const {subscribe, set, update} = writable({});
+    const productOrderStore: Writable<{}> = writable({});
+    const {subscribe, set, update} = productOrderStore;
 
     return {
         subscribe,
-        get: async (userId: number): Promise<Order> => {
+        get: async (): Promise<Order | {} | null> => {
             try {
-                const {data: pendingProductOrder}: AxiosResponse<Order> = await api.get(`productOrders/${userId}?status=pending`);
+                const productOrder = get(productOrderStore);
+                if (productOrder && Object.keys(productOrder).length !== 0) {
+                    return productOrder;
+                }
+
+                const cachedUser: User = get(user);
+                if (cachedUser && Object.keys(cachedUser).length === 0) return null;
+
+                const {data: pendingProductOrder}: AxiosResponse<Order> = await api.get(`productOrders/${cachedUser.id}?status=pending`);
                 set(pendingProductOrder);
                 return pendingProductOrder;
             } catch (err) {
@@ -57,6 +68,22 @@ function getProductOrder() {
                     }
                     return productOrder;
                 })
+            } catch (err: any) {
+                console.error(err);
+                throw err;
+            }
+        },
+        completeOrder: async function (): Promise<number | void> {
+            try {
+                debugger
+                const productOrder: Order | {} | null = await this.get();
+                if (productOrder && Object.keys(productOrder).length !== 0) {
+                    const {data: completedOrderID}: AxiosResponse<number> = await api.post(`productOrders/complete-order`, productOrder);
+                    set({});
+                    return completedOrderID;
+                } else {
+                    throw new Error("No productOrder was found")
+                }
             } catch (err: any) {
                 console.error(err);
                 throw err;
