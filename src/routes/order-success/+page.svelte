@@ -9,7 +9,7 @@
 <section id="order-success" class="container prose md:container md:mx-auto order-status">
     {#await completeOrderPromise}
     {:then completedOrderId}
-        <BackBtn url={"/clothes"} msg={"Buy more clothes"}/>
+        <BackBtn url={"/"} msg={"Buy more clothes"}/>
         <h1>Your order went through</h1>
         <h2>Check your email for confirmation</h2>
         <h3>Order id: {completedOrderId}</h3>

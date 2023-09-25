@@ -1,11 +1,16 @@
 <script lang="ts">
     import '../styling/app.scss';
     import {productOrder} from "../stores/order-store";
-    import {onDestroy} from "svelte";
+    import {onDestroy, onMount} from "svelte";
     import type {Order, Product} from "../types";
+
+    export let data;
 
     let numOfProductItems = 0;
     let productOrderPromise = getProductOrder();
+
+    $: maleCategories = data.productCategories.filter(category => category.sex === 'male' || category.sex === 'unisex');
+    $: femaleCategories = data.productCategories.filter(category => category.sex === 'female' || category.sex === 'unisex');
 
     async function getProductOrder(): Promise<Order | {} | void> {
         return productOrder.get();
@@ -13,6 +18,10 @@
 
     const unsubscribe = productOrder.subscribe((productOrder: Order): void => {
         numOfProductItems = productOrder?.orderItems?.length || 0;
+    })
+
+    onMount(() => {
+        console.log(data)
     })
 
     onDestroy((): void => {
@@ -32,15 +41,23 @@
     <div class="flex-none">
         <div class="categories">
             <div class="dropdown dropdown-end">
-                <label tabindex="0" class="btn btn-ghost rounded-btn">Clothes</label>
+                <label tabindex="0" class="btn btn-ghost rounded-btn">Men</label>
                 <ul tabindex="0" class="menu dropdown-content p-2 shadow bg-base-100 rounded-box w-52 mt-4">
-                    <li><a href="/clothes">Item 1</a></li>
+                    {#each maleCategories as productCategory}
+                        <li>
+                            <a href={'/category' + productCategory.link + '/?id=' + productCategory.id + '&sex=male'}>{productCategory.name}</a>
+                        </li>
+                    {/each}
                 </ul>
             </div>
             <div class="dropdown dropdown-end">
-                <label tabindex="0" class="btn btn-ghost rounded-btn">Shoes</label>
+                <label tabindex="0" class="btn btn-ghost rounded-btn">Women</label>
                 <ul tabindex="0" class="menu dropdown-content p-2 shadow bg-base-100 rounded-box w-52 mt-4">
-                    <li><a href="/clothes">Item 1</a></li>
+                    {#each femaleCategories as productCategory}
+                        <li>
+                            <a href={'/category' + productCategory.link + '/?id=' + productCategory.id + '&sex=female'}>{productCategory.name}</a>
+                        </li>
+                    {/each}
                 </ul>
             </div>
         </div>
@@ -89,6 +106,9 @@
 <style lang="scss">
   .navbar {
     box-shadow: 0px 0px 3px 1px gray;
-    margin-bottom: 1rem;
+
+    .menu.dropdown-content {
+      z-index: 2;
+    }
   }
 </style>

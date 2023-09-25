@@ -52,6 +52,15 @@ function getProductOrder() {
                 throw err;
             }
         },
+        deleteAllOrderItems: async (orderId: number): Promise<void> => {
+            try {
+                await api.delete(`productOrders/${orderId}`);
+                set([]);
+            } catch (err: any) {
+                console.error(err);
+                throw err;
+            }
+        },
         changeOrderItemQuantity: async (type: string, orderItemId: number): Promise<void> => {
             try {
                 const updateOrderItemQuantityReq: { type: string, orderItemId: number } = {
@@ -75,7 +84,6 @@ function getProductOrder() {
         },
         completeOrder: async function (): Promise<number | void> {
             try {
-                debugger
                 const productOrder: Order | {} | null = await this.get();
                 if (productOrder && Object.keys(productOrder).length !== 0) {
                     const {data: completedOrderID}: AxiosResponse<number> = await api.post(`productOrders/complete-order`, productOrder);

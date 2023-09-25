@@ -2,7 +2,7 @@
     import {productOrder} from "../../stores/order-store";
     import Alert from "../../components/Alert.svelte";
     import {changeQuantityTypes} from "../../enums";
-    import type {Order, OrderItem, User} from "../../types";
+    import type {Order, OrderItem, ProductOrderReq, User} from "../../types";
     import api from "../../service/axios";
 
     let error = null;
@@ -40,9 +40,8 @@
             if (!selectedOrderItemId) throw new Error("Order item id is required");
             await productOrder.deleteOrderItem(selectedOrderItemId);
             productOrderPromise = getProductOrder();
-        } catch (e: any) {
-            console.error(e);
-            error = e;
+        } catch (err: any) {
+            error = err.response?.data?.message;
         }
     }
 
@@ -55,7 +54,7 @@
             await productOrder.changeOrderItemQuantity(action, orderItem.id);
             productOrderPromise = getProductOrder();
         } catch (err: any) {
-            error = err;
+            error = err.response?.data?.message;
         }
     }
 
@@ -63,8 +62,17 @@
         try {
             const {data: redirectUrl}: { data: string; } = await api.post("productOrders/checkout", productOrder);
             window.location.href = redirectUrl;
-        } catch (e) {
-            error = e;
+        } catch (err: any) {
+            error = err.response?.data?.message;
+        }
+    }
+
+    const clearCart = async (order: Order) => {
+        try {
+            await productOrder.deleteAllOrderItems(order.id);
+            productOrderPromise = getProductOrder();
+        } catch (err: any) {
+            error = err.response?.data?.message;
         }
     }
 
@@ -127,8 +135,11 @@
                 <p>No products added to the cart yet</p>
             {/if}
         </div>
+        {#if productOrder?.orderItems?.length > 0}
+            <button class="btn btn-outline btn-error" on:click={clearCart(productOrder)}>Clear Cart</button>
+        {/if}
         <h2><span>Total Price: </span>{getTotalPrice(productOrder)}$</h2>
-        <button class="btn btn-outline" disabled={productOrder?.orderItems.length < 1}
+        <button class="btn btn-outline" disabled={productOrder?.orderItems?.length < 1}
                 on:click={onStripeCheckout(productOrder)}>
             {#if loading}
                 <span class="loading loading-spinner"></span>

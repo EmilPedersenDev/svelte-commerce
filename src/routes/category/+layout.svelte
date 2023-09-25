@@ -4,13 +4,8 @@
     export let data;
 
     onMount(() => {
-        console.log('account', data)
+        console.log(data)
     })
 </script>
 
-<h1>Account</h1>
-
-<ul>
-    <li>Profile</li>
-    <li>Settings</li>
-</ul>
+<slot/>

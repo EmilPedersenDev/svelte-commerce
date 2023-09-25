@@ -7,6 +7,13 @@ export interface Product {
     productItems: ProductItem[]
 }
 
+export interface ProductCategory {
+    id: number;
+    name: string;
+    link: string;
+    products: Product[]
+}
+
 
 export interface Status {
     PENDING: string;
@@ -24,13 +31,7 @@ export interface Order {
 
 export interface ProductOrderReq {
     userId: number | undefined;
-    productItem: () => ProductItem | undefined;
-    currentProductOrder: null
-}
-
-export interface ProductOrderReq {
-    userId: number | undefined;
-    productItem: () => ProductItem | undefined;
+    productItem: ProductItem | undefined;
     currentProductOrder: null
 }
 
