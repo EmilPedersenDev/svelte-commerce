@@ -3,7 +3,7 @@
 
 </script>
 
-<section id="order-fail" class="container prose md:container md:mx-auto order-status">
+<section id="order-fail" class="container prose md:container md:mx-auto p-5 md:p-0 order-status">
     <BackBtn url={"/cart"} msg={"Back to cart"}/>
     <h1>Your order did unfortunately not go through</h1>
     <h2>Please try again</h2>

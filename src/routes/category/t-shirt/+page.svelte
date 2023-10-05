@@ -9,7 +9,7 @@
     })
 </script>
 
-<div class="container prose md:container md:mx-auto">
+<div class="container prose md:container md:mx-auto p-5 md:p-0">
     <h1>
         T-Shirt
     </h1>

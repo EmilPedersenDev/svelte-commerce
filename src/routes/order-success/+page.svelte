@@ -6,7 +6,7 @@
     let completeOrderPromise = productOrder.completeOrder();
 </script>
 
-<section id="order-success" class="container prose md:container md:mx-auto order-status">
+<section id="order-success" class="container prose md:container md:mx-auto p-5 md:p-0 order-status">
     {#await completeOrderPromise}
     {:then completedOrderId}
         <BackBtn url={"/"} msg={"Buy more clothes"}/>

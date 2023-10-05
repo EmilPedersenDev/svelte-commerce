@@ -85,7 +85,7 @@
         <h1>Cart</h1>
         <div class="overflow-x-auto">
             {#if productOrder.orderItems}
-                <table class="table">
+                <table class="table table-xs md:table-md">
                     <thead>
                     <tr>
                         <th>Id</th>
@@ -104,15 +104,17 @@
                             <td>{orderItem.productItem?.product?.name}</td>
                             <td>{orderItem.productItem?.size}</td>
                             <td>
-                                <button on:click={() => { changeQuantity(changeQuantityTypes.DECREMENT, orderItem) }}
-                                        class="number-btn decrement">
-                                    -
-                                </button>
-                                <span class="number-input">{orderItem.quantity}</span>
-                                <button on:click={() => { changeQuantity(changeQuantityTypes.INCREMENT, orderItem) }}
-                                        class="number-btn increment">
-                                    +
-                                </button>
+                                <div class="quantity-container">
+                                    <button on:click={() => { changeQuantity(changeQuantityTypes.DECREMENT, orderItem) }}
+                                            class="number-btn decrement">
+                                        -
+                                    </button>
+                                    <span class="number-input">{orderItem.quantity}</span>
+                                    <button on:click={() => { changeQuantity(changeQuantityTypes.INCREMENT, orderItem) }}
+                                            class="number-btn increment">
+                                        +
+                                    </button>
+                                </div>
                             </td>
                             <td>{orderItem.productItem?.color}</td>
                             <td>{orderItem.price}$</td>
@@ -195,20 +197,25 @@
       padding: 0 2px;
     }
 
-    .number-btn {
-      background-color: rgb(242, 242, 242);
-      border-radius: 50%;
-      padding: 1px 7px 3px;
-      transition: all ease 0.3s;
+    .quantity-container {
+      display: flex;
 
-      &:hover {
-        background-color: rgb(238, 236, 236);
-      }
+      .number-btn {
+        background-color: rgb(242, 242, 242);
+        border-radius: 50%;
+        padding: 1px 7px 3px;
+        transition: all ease 0.3s;
 
-      &.decrement {
-        padding: 1px 8px 3px;
+        &:hover {
+          background-color: rgb(238, 236, 236);
+        }
 
+        &.decrement {
+          padding: 1px 8px 3px;
+
+        }
       }
     }
+
   }
 </style>

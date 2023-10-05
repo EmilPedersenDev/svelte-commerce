@@ -26,6 +26,7 @@ export interface Order {
     id: number;
     status: string;
     orderItems?: OrderItem[]
+    userId?: number
 }
 
 
