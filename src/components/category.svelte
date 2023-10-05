@@ -13,8 +13,8 @@
 </script>
 
 
-<div id="category" class="container prose md:container md:mx-auto">
-    <ul>
+<div id="category" class="container mx-auto">
+    <ul class="p-0">
         {#each products as product}
             <a href={`/category/${categoryName}/${product.id}`}>
                 <li class="card card-compact bg-base-100 shadow-xl">
@@ -49,6 +49,10 @@
       display: grid;
       grid-template-columns: repeat(4, minmax(200px, 1fr));
       gap: 20px;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
 
       li {
         height: 400px;

@@ -91,7 +91,7 @@
 {/if}
 <h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"> {product.name} </h1>
 
-<div class="card card-compact bg-base-100">
+<div class="card card-compact bg-base-100 p-5 md:p-0">
     <figure><img
             src={product.image}
             alt="Shoes"/></figure>
